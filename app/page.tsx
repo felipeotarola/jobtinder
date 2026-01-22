@@ -249,6 +249,7 @@ export default function Home() {
   const [exitDirection, setExitDirection] = useState<SwipeDirection | null>(null);
   const [hasSearched, setHasSearched] = useState(false);
   const [likedCount, setLikedCount] = useState(0);
+  const [isSwiping, setIsSwiping] = useState(false);
 
   const activeBranch = useMemo(
     () => BRANCHES.find((branch) => branch.id === filters.branch),
@@ -324,24 +325,40 @@ export default function Home() {
 
   const handleSwipe = useCallback(
     async (direction: SwipeDirection) => {
-      if (!jobs.length) return;
-      const [current, ...rest] = jobs;
+      if (isSwiping) return; // Prevent multiple simultaneous swipes
+      
+      setIsSwiping(true);
       setExitDirection(direction);
-      setJobs(rest);
-      if (direction === "right") {
-        setLikedCount((count) => count + 1);
-      }
-      try {
-        await fetch(`/api/jobs/${current.id}/swipe`, {
+      
+      // Use functional update to get the current jobs state
+      setJobs((currentJobs) => {
+        if (!currentJobs.length) {
+          setIsSwiping(false);
+          return currentJobs;
+        }
+        
+        const [current, ...rest] = currentJobs;
+        
+        if (direction === "right") {
+          setLikedCount((count) => count + 1);
+        }
+        
+        // Make the API call
+        fetch(`/api/jobs/${current.id}/swipe`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ direction }),
+        }).catch(() => {
+          // Swipes are optimistic; ignore errors for now.
+        }).finally(() => {
+          // Small delay to allow the exit animation to complete
+          setTimeout(() => setIsSwiping(false), 250);
         });
-      } catch {
-        // Swipes are optimistic; ignore errors for now.
-      }
+        
+        return rest;
+      });
     },
-    [jobs],
+    [isSwiping],
   );
 
   const stack = useMemo(() => jobs.slice(0, 3), [jobs]);
@@ -357,6 +374,9 @@ export default function Home() {
             <h1 className="font-display text-4xl text-[#1b1a17] sm:text-5xl">
               Swipe into your next role
             </h1>
+            <p className="mt-2 text-sm text-black/60">
+              Live listings from Arbetsformedlingen.
+            </p>
           </div>
           <div className="flex items-center gap-4 rounded-full border border-black/10 bg-white/70 px-4 py-2 text-sm shadow-sm backdrop-blur">
             <span className="text-xs uppercase tracking-[0.2em] text-black/50">
@@ -551,7 +571,7 @@ export default function Home() {
                 className="flex h-12 w-32 items-center justify-center rounded-full border border-black/10 bg-white text-xs font-semibold uppercase tracking-[0.3em] text-black/70 shadow-sm"
                 whileHover={{ y: -2 }}
                 whileTap={{ scale: 0.96 }}
-                disabled={!jobs.length}
+                disabled={!jobs.length || isSwiping}
                 type="button"
               >
                 Pass
@@ -561,12 +581,15 @@ export default function Home() {
                 className="flex h-12 w-32 items-center justify-center rounded-full bg-black text-xs font-semibold uppercase tracking-[0.3em] text-white shadow-lg shadow-black/20"
                 whileHover={{ y: -2 }}
                 whileTap={{ scale: 0.96 }}
-                disabled={!jobs.length}
+                disabled={!jobs.length || isSwiping}
                 type="button"
               >
                 Save
               </motion.button>
             </div>
+            <p className="text-center text-xs uppercase tracking-[0.2em] text-black/50">
+              Swipe right to save · left to dismiss
+            </p>
           </section>
         </div>
       </div>

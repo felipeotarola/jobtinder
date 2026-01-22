@@ -15,7 +15,7 @@ function parseDirection(value: unknown): SwipeDirection | null {
 
 export async function POST(
   request: NextRequest,
-  context: { params: { id: string } },
+  context: { params: Promise<{ id: string }> },
 ) {
   const body = await request.json().catch(() => null);
   const direction = parseDirection(body?.direction);
@@ -27,7 +27,8 @@ export async function POST(
     );
   }
 
-  const jobId = context.params.id;
+  const params = await context.params;
+  const jobId = params.id;
   let job = getJobById(jobId);
 
   if (!job) {
