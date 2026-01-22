@@ -169,7 +169,7 @@ function SwipeCard({
             {job.headline ?? "Tjänst utan titel"}
           </h2>
         </div>
-        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-yellow-50 shadow-md">
+        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-yellow-200 to-yellow-50 shadow-md">
           {job.logoUrl ? (
             <img
               src={job.logoUrl}
@@ -238,14 +238,14 @@ function SwipeCard({
             transition={{ duration: 0.15 }}
           />
           <motion.div
-            className="absolute left-8 top-8 rounded-2xl border-4 border-yellow-400 bg-white px-6 py-3 flex items-center gap-2 shadow-lg"
+            className="absolute left-8 top-8 rounded-2xl border-4 border-yellow-300 bg-white px-6 py-3 flex items-center gap-2 shadow-lg"
             style={{ opacity: likeOpacity }}
             animate={isSwiping && exitDirection === "right" ? { opacity: 1, scale: 1.1 } : {}}
           >
             <svg className="h-8 w-8 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
               <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
             </svg>
-            <span className="text-xl font-bold text-yellow-600">LIKE</span>
+            <span className="text-xl font-bold text-yellow-700">LIKE</span>
           </motion.div>
           <motion.div
             className="absolute right-8 top-8 rounded-2xl border-4 border-slate-400 bg-white px-6 py-3 flex items-center gap-2 shadow-lg"
@@ -287,38 +287,55 @@ export default function Home() {
     [filters.branch],
   );
 
-  const fetchLikedCount = useCallback(async () => {
+  const loadLikedJobs = useCallback(() => {
     try {
-      const response = await fetch("/api/jobs/liked");
-      if (!response.ok) return;
-      const data = (await response.json()) as { count?: number };
-      setLikedCount(data.count ?? 0);
+      const saved = localStorage.getItem('likedJobs');
+      if (saved) {
+        const jobs = JSON.parse(saved) as JobCard[];
+        setLikedJobs(jobs);
+        setLikedCount(jobs.length);
+      }
     } catch {
-      // Ignore count failures.
+      // Ignore localStorage failures
     }
   }, []);
 
-  const fetchLikedJobs = useCallback(async () => {
+  const saveLikedJob = useCallback((job: JobCard) => {
     try {
-      const response = await fetch("/api/jobs/liked");
-      if (!response.ok) return;
-      const data = (await response.json()) as { jobs?: JobCard[]; count?: number };
-      setLikedJobs(data.jobs ?? []);
-      setLikedCount(data.count ?? 0);
+      const saved = localStorage.getItem('likedJobs');
+      const existing = saved ? (JSON.parse(saved) as JobCard[]) : [];
+      const updated = [job, ...existing];
+      localStorage.setItem('likedJobs', JSON.stringify(updated));
+      setLikedJobs(updated);
+      setLikedCount(updated.length);
     } catch {
-      // Ignore failures.
+      // Ignore localStorage failures
+    }
+  }, []);
+
+  const deleteLikedJob = useCallback((jobId: string) => {
+    try {
+      const saved = localStorage.getItem('likedJobs');
+      if (!saved) return;
+      const existing = JSON.parse(saved) as JobCard[];
+      const updated = existing.filter(job => job.id !== jobId);
+      localStorage.setItem('likedJobs', JSON.stringify(updated));
+      setLikedJobs(updated);
+      setLikedCount(updated.length);
+    } catch {
+      // Ignore localStorage failures
     }
   }, []);
 
   useEffect(() => {
-    fetchLikedCount();
-  }, [fetchLikedCount]);
+    loadLikedJobs();
+  }, [loadLikedJobs]);
 
   useEffect(() => {
     if (isSidebarOpen) {
-      fetchLikedJobs();
+      loadLikedJobs();
     }
-  }, [isSidebarOpen, fetchLikedJobs]);
+  }, [isSidebarOpen, loadLikedJobs]);
 
   const loadJobs = useCallback(async () => {
     setStatus("loading");
@@ -374,50 +391,34 @@ export default function Home() {
 
   const handleSwipe = useCallback(
     async (direction: SwipeDirection) => {
-      if (isSwiping) return; // Prevent multiple simultaneous swipes
+      if (isSwiping || !jobs.length) return; // Prevent multiple simultaneous swipes
       
       setIsSwiping(true);
       setExitDirection(direction);
       
-      // Use functional update to get the current jobs state
-      setJobs((currentJobs) => {
-        if (!currentJobs.length) {
-          setIsSwiping(false);
-          setExitDirection(null);
-          return currentJobs;
-        }
-        
-        const [current, ...rest] = currentJobs;
-        
-        if (direction === "right") {
-          setLikedCount((count) => count + 1);
-        }
-        
-        // Make the API call
-        fetch(`/api/jobs/${current.id}/swipe`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ direction }),
-        }).catch(() => {
-          // Swipes are optimistic; ignore errors for now.
-        }).finally(() => {
-          // Small delay to allow the exit animation to complete, then reset
-          setTimeout(() => {
-            setIsSwiping(false);
-            setExitDirection(null);
-          }, 250);
-        });
-        
-        return rest;
-      });
+      const currentJob = jobs[0];
+      
+      // Save to localStorage if swiping right
+      if (direction === "right") {
+        saveLikedJob(currentJob);
+      }
+      
+      // Update jobs state to remove the first job
+      setJobs((currentJobs) => currentJobs.slice(1));
+      
+      // Small delay to allow the exit animation to complete, then reset
+      setTimeout(() => {
+        setIsSwiping(false);
+        setExitDirection(null);
+      }, 250);
     },
-    [isSwiping],
+    [isSwiping, jobs, saveLikedJob],
   );
 
   const stack = useMemo(() => jobs.slice(0, 3), [jobs]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-yellow-100 via-amber-50 to-white">
       <div className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-10 px-6 py-10 lg:px-12">
         <header className="flex flex-wrap items-center justify-between gap-6">
           <div>
@@ -433,7 +434,7 @@ export default function Home() {
           </div>
           <button
             onClick={() => setIsSidebarOpen(true)}
-            className="flex items-center gap-3 rounded-2xl bg-yellow-400 px-6 py-3 text-gray-800 shadow-lg hover:bg-yellow-500 transition-all cursor-pointer"
+            className="flex items-center gap-3 rounded-2xl bg-gradient-to-r from-yellow-300 to-yellow-100 px-6 py-3 text-gray-800 shadow-lg hover:from-yellow-400 hover:to-yellow-200 transition-all cursor-pointer"
           >
             <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
               <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
@@ -468,7 +469,7 @@ export default function Home() {
                     }
                     className={`relative overflow-hidden rounded-full px-5 py-2.5 text-sm font-semibold transition ${
                       isActive
-                        ? "bg-yellow-400 text-gray-800 shadow-md"
+                        ? "bg-gradient-to-r from-yellow-300 to-yellow-100 text-gray-800 shadow-md"
                         : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                     }`}
                     type="button"
@@ -493,7 +494,7 @@ export default function Home() {
                       keywords: event.target.value,
                     }))
                   }
-                  className="rounded-xl border-2 border-gray-200 bg-white px-4 py-2.5 text-gray-900 outline-none transition focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100"
+                  className="rounded-xl border-2 border-gray-200 bg-white px-4 py-2.5 text-gray-900 outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
                   placeholder="t.ex. produktägare, python, lön"
                 />
               </label>
@@ -507,7 +508,7 @@ export default function Home() {
                       location: event.target.value,
                     }))
                   }
-                  className="rounded-xl border-2 border-gray-200 bg-white px-4 py-2.5 text-gray-900 outline-none transition focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100"
+                  className="rounded-xl border-2 border-gray-200 bg-white px-4 py-2.5 text-gray-900 outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
                   placeholder="t.ex. Stockholm, distans"
                 />
               </label>
@@ -521,7 +522,7 @@ export default function Home() {
                       category: event.target.value,
                     }))
                   }
-                  className="rounded-xl border-2 border-gray-200 bg-white px-4 py-2.5 text-gray-900 outline-none transition focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100"
+                  className="rounded-xl border-2 border-gray-200 bg-white px-4 py-2.5 text-gray-900 outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100"
                   placeholder="t.ex. frontend, försäljning, vård"
                 />
               </label>
@@ -536,14 +537,14 @@ export default function Home() {
                       remoteOnly: event.target.checked,
                     }))
                   }
-                  className="h-5 w-5 accent-yellow-500"
+                  className="h-5 w-5 accent-amber-500"
                 />
               </label>
             </div>
 
             <motion.button
               onClick={loadJobs}
-              className="mt-2 flex items-center justify-center rounded-xl bg-yellow-400 px-6 py-4 text-base font-bold text-gray-800 shadow-lg transition hover:bg-yellow-500 disabled:cursor-not-allowed disabled:opacity-60"
+              className="mt-2 flex items-center justify-center rounded-xl bg-gradient-to-r from-yellow-300 to-yellow-100 px-6 py-4 text-base font-bold text-gray-800 shadow-lg transition hover:from-yellow-400 hover:to-yellow-200 disabled:cursor-not-allowed disabled:opacity-60"
               whileHover={{ y: -2, scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               disabled={status === "loading"}
@@ -600,7 +601,7 @@ export default function Home() {
                   </p>
                   <motion.button
                     onClick={loadJobs}
-                    className="rounded-xl bg-yellow-400 px-8 py-3 font-bold text-gray-800 shadow-lg hover:bg-yellow-500"
+                    className="rounded-xl bg-gradient-to-r from-yellow-300 to-yellow-100 px-8 py-3 font-bold text-gray-800 shadow-lg hover:from-yellow-400 hover:to-yellow-200"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     type="button"
@@ -626,7 +627,7 @@ export default function Home() {
               </motion.button>
               <motion.button
                 onClick={() => handleSwipe("right")}
-                className="flex h-20 w-20 items-center justify-center rounded-full bg-yellow-400 text-gray-800 shadow-xl hover:bg-yellow-500"
+                className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-yellow-300 to-yellow-100 text-gray-800 shadow-xl hover:from-yellow-400 hover:to-yellow-200"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 disabled={!jobs.length || isSwiping}
@@ -690,12 +691,24 @@ export default function Home() {
                   likedJobs.map((job) => (
                     <motion.div
                       key={job.id}
-                      className="bg-white border-2 border-gray-200 rounded-2xl p-4 hover:border-yellow-400 transition cursor-pointer"
+                      className="bg-white border-2 border-gray-200 rounded-2xl p-4 hover:border-yellow-300 transition relative"
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                     >
-                      <div className="flex items-start gap-3">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-yellow-50 flex-shrink-0">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          deleteLikedJob(job.id);
+                        }}
+                        className="absolute top-3 right-3 p-1.5 rounded-full bg-red-50 hover:bg-red-100 text-red-600 transition"
+                        title="Ta bort"
+                      >
+                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+                      <div className="flex items-start gap-3 pr-8">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-yellow-200 to-yellow-50 flex-shrink-0">
                           {job.logoUrl ? (
                             <img
                               src={job.logoUrl}

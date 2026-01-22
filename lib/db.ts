@@ -25,7 +25,9 @@ const globalForDb = globalThis as unknown as { sqliteDb?: Database.Database };
 const db = globalForDb.sqliteDb ?? new Database(dbPath);
 
 if (!globalForDb.sqliteDb) {
-  db.pragma("journal_mode = WAL");
+  // Use DELETE mode instead of WAL to avoid locking issues in serverless
+  db.pragma("journal_mode = DELETE");
+  db.pragma("busy_timeout = 5000"); // Wait up to 5 seconds if database is locked
   db.exec(`
     CREATE TABLE IF NOT EXISTS jobs (
       id TEXT PRIMARY KEY,
