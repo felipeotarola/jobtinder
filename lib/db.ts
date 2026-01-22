@@ -2,8 +2,12 @@ import Database from "better-sqlite3";
 import fs from "node:fs";
 import path from "node:path";
 
-// Keep the SQLite file outside of Next's build output.
-const dbDir = path.join(process.cwd(), "data");
+// In production (Vercel), use /tmp directory which is writable
+const isProduction = process.env.VERCEL === "1";
+const dbDir = isProduction 
+  ? "/tmp" 
+  : path.join(process.cwd(), "data");
+
 if (!fs.existsSync(dbDir)) {
   fs.mkdirSync(dbDir, { recursive: true });
 }
