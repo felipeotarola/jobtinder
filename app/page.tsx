@@ -169,7 +169,7 @@ function SwipeCard({
             {job.headline ?? "Tjänst utan titel"}
           </h2>
         </div>
-        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-50 shadow-md">
+        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-yellow-50 shadow-md">
           {job.logoUrl ? (
             <img
               src={job.logoUrl}
@@ -188,7 +188,7 @@ function SwipeCard({
         <span className="rounded-full bg-gray-100 px-4 py-2 font-medium text-gray-700">
           📍 {formatLocation(job.location)}
         </span>
-        <span className="rounded-full bg-indigo-100 px-4 py-2 font-medium text-indigo-700">
+        <span className="rounded-full bg-yellow-100 px-4 py-2 font-medium text-yellow-800">
           ⏰ {formatDate(job.applicationDeadline)}
         </span>
       </div>
@@ -204,7 +204,7 @@ function SwipeCard({
             href={job.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm font-semibold text-indigo-600 hover:text-indigo-700 flex items-center gap-1"
+            className="text-sm font-semibold text-yellow-700 hover:text-yellow-800 flex items-center gap-1"
           >
             Visa annons
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -225,31 +225,37 @@ function SwipeCard({
         <>
           {/* Full card overlay for Save */}
           <motion.div
-            className="absolute inset-0 rounded-3xl bg-green-500/10 pointer-events-none"
+            className="absolute inset-0 rounded-3xl bg-yellow-300/20 pointer-events-none"
             initial={{ opacity: 0 }}
             animate={isSwiping && exitDirection === "right" ? { opacity: 1 } : { opacity: 0 }}
             transition={{ duration: 0.15 }}
           />
           {/* Full card overlay for Pass */}
           <motion.div
-            className="absolute inset-0 rounded-3xl bg-red-500/10 pointer-events-none"
+            className="absolute inset-0 rounded-3xl bg-slate-400/20 pointer-events-none"
             initial={{ opacity: 0 }}
             animate={isSwiping && exitDirection === "left" ? { opacity: 1 } : { opacity: 0 }}
             transition={{ duration: 0.15 }}
           />
           <motion.div
-            className="absolute left-8 top-8 rounded-2xl border-4 border-green-500 bg-white px-6 py-3 text-xl font-bold text-green-500 shadow-lg"
+            className="absolute left-8 top-8 rounded-2xl border-4 border-yellow-400 bg-white px-6 py-3 flex items-center gap-2 shadow-lg"
             style={{ opacity: likeOpacity }}
             animate={isSwiping && exitDirection === "right" ? { opacity: 1, scale: 1.1 } : {}}
           >
-            LIKE
+            <svg className="h-8 w-8 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
+            </svg>
+            <span className="text-xl font-bold text-yellow-600">LIKE</span>
           </motion.div>
           <motion.div
-            className="absolute right-8 top-8 rounded-2xl border-4 border-red-500 bg-white px-6 py-3 text-xl font-bold text-red-500 shadow-lg"
+            className="absolute right-8 top-8 rounded-2xl border-4 border-slate-400 bg-white px-6 py-3 flex items-center gap-2 shadow-lg"
             style={{ opacity: passOpacity }}
             animate={isSwiping && exitDirection === "left" ? { opacity: 1, scale: 1.1 } : {}}
           >
-            NOPE
+            <svg className="h-8 w-8 text-slate-500" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M18 9.5a1.5 1.5 0 11-3 0v-6a1.5 1.5 0 013 0v6zM14 9.667v-5.43a2 2 0 00-1.105-1.79l-.05-.025A4 4 0 0011.055 2H5.64a2 2 0 00-1.962 1.608l-1.2 6A2 2 0 004.44 12H8v4a2 2 0 002 2 1 1 0 001-1v-.667a4 4 0 01.8-2.4l1.4-1.866a4 4 0 00.8-2.4z" />
+            </svg>
+            <span className="text-xl font-bold text-slate-600">NOPE</span>
           </motion.div>
         </>
       ) : null}
@@ -427,7 +433,7 @@ export default function Home() {
           </div>
           <button
             onClick={() => setIsSidebarOpen(true)}
-            className="flex items-center gap-3 rounded-2xl bg-indigo-600 px-6 py-3 text-white shadow-lg hover:bg-indigo-700 transition-all cursor-pointer"
+            className="flex items-center gap-3 rounded-2xl bg-yellow-400 px-6 py-3 text-gray-800 shadow-lg hover:bg-yellow-500 transition-all cursor-pointer"
           >
             <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
               <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
@@ -462,7 +468,7 @@ export default function Home() {
                     }
                     className={`relative overflow-hidden rounded-full px-5 py-2.5 text-sm font-semibold transition ${
                       isActive
-                        ? "bg-indigo-600 text-white shadow-md"
+                        ? "bg-yellow-400 text-gray-800 shadow-md"
                         : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                     }`}
                     type="button"
@@ -487,7 +493,7 @@ export default function Home() {
                       keywords: event.target.value,
                     }))
                   }
-                  className="rounded-xl border-2 border-gray-200 bg-white px-4 py-2.5 text-gray-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                  className="rounded-xl border-2 border-gray-200 bg-white px-4 py-2.5 text-gray-900 outline-none transition focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100"
                   placeholder="t.ex. produktägare, python, lön"
                 />
               </label>
@@ -501,7 +507,7 @@ export default function Home() {
                       location: event.target.value,
                     }))
                   }
-                  className="rounded-xl border-2 border-gray-200 bg-white px-4 py-2.5 text-gray-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                  className="rounded-xl border-2 border-gray-200 bg-white px-4 py-2.5 text-gray-900 outline-none transition focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100"
                   placeholder="t.ex. Stockholm, distans"
                 />
               </label>
@@ -515,7 +521,7 @@ export default function Home() {
                       category: event.target.value,
                     }))
                   }
-                  className="rounded-xl border-2 border-gray-200 bg-white px-4 py-2.5 text-gray-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                  className="rounded-xl border-2 border-gray-200 bg-white px-4 py-2.5 text-gray-900 outline-none transition focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100"
                   placeholder="t.ex. frontend, försäljning, vård"
                 />
               </label>
@@ -530,14 +536,14 @@ export default function Home() {
                       remoteOnly: event.target.checked,
                     }))
                   }
-                  className="h-5 w-5 accent-indigo-600"
+                  className="h-5 w-5 accent-yellow-500"
                 />
               </label>
             </div>
 
             <motion.button
               onClick={loadJobs}
-              className="mt-2 flex items-center justify-center rounded-xl bg-indigo-600 px-6 py-4 text-base font-bold text-white shadow-lg transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
+              className="mt-2 flex items-center justify-center rounded-xl bg-yellow-400 px-6 py-4 text-base font-bold text-gray-800 shadow-lg transition hover:bg-yellow-500 disabled:cursor-not-allowed disabled:opacity-60"
               whileHover={{ y: -2, scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               disabled={status === "loading"}
@@ -594,7 +600,7 @@ export default function Home() {
                   </p>
                   <motion.button
                     onClick={loadJobs}
-                    className="rounded-xl bg-indigo-600 px-8 py-3 font-bold text-white shadow-lg hover:bg-indigo-700"
+                    className="rounded-xl bg-yellow-400 px-8 py-3 font-bold text-gray-800 shadow-lg hover:bg-yellow-500"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     type="button"
@@ -620,7 +626,7 @@ export default function Home() {
               </motion.button>
               <motion.button
                 onClick={() => handleSwipe("right")}
-                className="flex h-20 w-20 items-center justify-center rounded-full bg-green-500 text-white shadow-xl hover:bg-green-600"
+                className="flex h-20 w-20 items-center justify-center rounded-full bg-yellow-400 text-gray-800 shadow-xl hover:bg-yellow-500"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 disabled={!jobs.length || isSwiping}
@@ -684,12 +690,12 @@ export default function Home() {
                   likedJobs.map((job) => (
                     <motion.div
                       key={job.id}
-                      className="bg-white border-2 border-gray-200 rounded-2xl p-4 hover:border-indigo-500 transition cursor-pointer"
+                      className="bg-white border-2 border-gray-200 rounded-2xl p-4 hover:border-yellow-400 transition cursor-pointer"
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                     >
                       <div className="flex items-start gap-3">
-                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 flex-shrink-0">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-yellow-50 flex-shrink-0">
                           {job.logoUrl ? (
                             <img
                               src={job.logoUrl}
@@ -717,7 +723,7 @@ export default function Home() {
                               href={job.url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-indigo-600 hover:text-indigo-700"
+                              className="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-yellow-700 hover:text-yellow-800"
                               onClick={(e) => e.stopPropagation()}
                             >
                               Visa annons
