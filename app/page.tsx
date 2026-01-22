@@ -111,12 +111,14 @@ function SwipeCard({
   isTop,
   exitDirection,
   onSwipe,
+  isSwiping,
 }: {
   job: JobCard;
   depth: number;
   isTop: boolean;
   exitDirection: SwipeDirection | null;
   onSwipe: (direction: SwipeDirection) => void;
+  isSwiping: boolean;
 }) {
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-200, 0, 200], [-10, 0, 10]);
@@ -216,15 +218,31 @@ function SwipeCard({
 
       {isTop ? (
         <>
+          {/* Full card overlay for Save */}
+          <motion.div
+            className="absolute inset-0 rounded-[32px] bg-[#2f5233]/10 pointer-events-none"
+            initial={{ opacity: 0 }}
+            animate={isSwiping && exitDirection === "right" ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          />
+          {/* Full card overlay for Pass */}
+          <motion.div
+            className="absolute inset-0 rounded-[32px] bg-[#7b2d26]/10 pointer-events-none"
+            initial={{ opacity: 0 }}
+            animate={isSwiping && exitDirection === "left" ? { opacity: 1 } : { opacity: 0 }}
+            transition={{ duration: 0.15 }}
+          />
           <motion.div
             className="absolute left-8 top-8 rounded-full border border-[#2f5233] bg-[#eff7ed] px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#2f5233]"
             style={{ opacity: likeOpacity }}
+            animate={isSwiping && exitDirection === "right" ? { opacity: 1 } : {}}
           >
             Save
           </motion.div>
           <motion.div
             className="absolute right-8 top-8 rounded-full border border-[#7b2d26] bg-[#fbf1ee] px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#7b2d26]"
             style={{ opacity: passOpacity }}
+            animate={isSwiping && exitDirection === "left" ? { opacity: 1 } : {}}
           >
             Pass
           </motion.div>
@@ -334,6 +352,7 @@ export default function Home() {
       setJobs((currentJobs) => {
         if (!currentJobs.length) {
           setIsSwiping(false);
+          setExitDirection(null);
           return currentJobs;
         }
         
@@ -351,8 +370,11 @@ export default function Home() {
         }).catch(() => {
           // Swipes are optimistic; ignore errors for now.
         }).finally(() => {
-          // Small delay to allow the exit animation to complete
-          setTimeout(() => setIsSwiping(false), 250);
+          // Small delay to allow the exit animation to complete, then reset
+          setTimeout(() => {
+            setIsSwiping(false);
+            setExitDirection(null);
+          }, 250);
         });
         
         return rest;
@@ -536,6 +558,7 @@ export default function Home() {
                     isTop={index === 0}
                     exitDirection={index === 0 ? exitDirection : null}
                     onSwipe={handleSwipe}
+                    isSwiping={isSwiping && index === 0}
                   />
                 ))}
               </AnimatePresence>
