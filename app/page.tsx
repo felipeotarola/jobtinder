@@ -49,56 +49,56 @@ const BRANCHES: Branch[] = [
     label: "Tech",
     query: "developer engineer software data",
     tone: "bg-[#17202a] text-white",
-    description: "Product, data, engineering",
+    description: "Produkt, data, utveckling",
   },
   {
     id: "design",
     label: "Design",
     query: "design ux ui product",
     tone: "bg-[#6f1d1b] text-white",
-    description: "UX, UI, creative",
+    description: "UX, UI, kreativt",
   },
   {
     id: "sales",
-    label: "Sales",
+    label: "Sälj",
     query: "sales account business",
     tone: "bg-[#1d3557] text-white",
-    description: "Sales, account, growth",
+    description: "Försäljning, kunder, tillväxt",
   },
   {
     id: "health",
-    label: "Health",
+    label: "Vård",
     query: "nurse care medical health",
     tone: "bg-[#283618] text-white",
-    description: "Care and wellbeing",
+    description: "Vård och omsorg",
   },
   {
     id: "trades",
-    label: "Trades",
+    label: "Hantverket",
     query: "electrician carpenter mechanic",
     tone: "bg-[#5f370e] text-white",
-    description: "Skilled trades",
+    description: "Yrkesarbete",
   },
 ];
 
 const SWIPE_THRESHOLD = 120;
 
 function formatLocation(location?: JobLocation): string {
-  if (!location) return "Location not specified";
+  if (!location) return "Plats ej angiven";
   const parts = [
     location.city,
     location.municipality,
     location.region,
     location.country,
   ].filter(Boolean);
-  return parts.length ? parts.join(", ") : "Location not specified";
+  return parts.length ? parts.join(", ") : "Plats ej angiven";
 }
 
 function formatDate(value?: string): string {
-  if (!value) return "Open";
+  if (!value) return "Öppen";
   const parsed = new Date(value);
-  if (Number.isNaN(parsed.getTime())) return "Open";
-  return parsed.toLocaleDateString("en-SE", {
+  if (Number.isNaN(parsed.getTime())) return "Öppen";
+  return parsed.toLocaleDateString("sv-SE", {
     year: "numeric",
     month: "short",
     day: "2-digit",
@@ -127,7 +127,7 @@ function SwipeCard({
 
   return (
     <motion.article
-      className="absolute inset-0 flex h-full w-full flex-col gap-6 rounded-[32px] border border-black/10 bg-white/90 p-8 shadow-[0_30px_60px_-40px_rgba(32,26,23,0.7)] backdrop-blur"
+      className="absolute inset-0 flex h-full w-full flex-col gap-6 rounded-3xl bg-white p-8 shadow-2xl border-2 border-gray-100"
       style={{
         x: isTop ? x : 0,
         rotate: isTop ? rotate : 0,
@@ -161,58 +161,63 @@ function SwipeCard({
       }
     >
       <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-xs uppercase tracking-[0.2em] text-black/50">
-            {job.employer?.name ?? "Employer"}
+        <div className="flex-1">
+          <p className="text-sm font-medium text-gray-500">
+            {job.employer?.name ?? "Arbetsgivare"}
           </p>
-          <h2 className="font-display text-3xl text-[#1b1a17]">
-            {job.headline ?? "Untitled role"}
+          <h2 className="text-3xl font-bold text-gray-900 mt-1">
+            {job.headline ?? "Tjänst utan titel"}
           </h2>
         </div>
-        <div className="flex h-12 w-12 items-center justify-center rounded-full border border-black/10 bg-white shadow-sm">
+        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-indigo-50 shadow-md">
           {job.logoUrl ? (
             <img
               src={job.logoUrl}
               alt={job.employer?.name ?? "Logo"}
-              className="h-8 w-8 object-contain"
+              className="h-12 w-12 object-contain"
             />
           ) : (
-            <span className="text-xs font-semibold text-black/50">LOGO</span>
+            <svg className="h-8 w-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clipRule="evenodd" />
+            </svg>
           )}
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2 text-xs uppercase tracking-[0.2em] text-black/60">
-        <span className="rounded-full border border-black/10 px-3 py-1">
-          {formatLocation(job.location)}
+      <div className="flex flex-wrap gap-2 text-sm">
+        <span className="rounded-full bg-gray-100 px-4 py-2 font-medium text-gray-700">
+          📍 {formatLocation(job.location)}
         </span>
-        <span className="rounded-full border border-black/10 px-3 py-1">
-          Apply by {formatDate(job.applicationDeadline)}
+        <span className="rounded-full bg-indigo-100 px-4 py-2 font-medium text-indigo-700">
+          ⏰ {formatDate(job.applicationDeadline)}
         </span>
       </div>
 
-      <p className="text-sm leading-7 text-black/70">
+      <p className="text-base leading-relaxed text-gray-700">
         {job.excerpt ??
-          "No description snippet available. Open the listing for full details."}
+          "Ingen beskrivning tillgänglig. Klicka 'Visa annons' för fullständig information."}
       </p>
 
-      <div className="mt-auto flex items-center justify-between">
+      <div className="mt-auto flex items-center justify-between border-t border-gray-100 pt-4">
         {job.url ? (
           <a
             href={job.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm font-semibold uppercase tracking-[0.2em] text-black"
+            className="text-sm font-semibold text-indigo-600 hover:text-indigo-700 flex items-center gap-1"
           >
-            View listing
+            Visa annons
+            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+            </svg>
           </a>
         ) : (
-          <span className="text-sm font-semibold uppercase tracking-[0.2em] text-black/40">
-            No listing url
+          <span className="text-sm font-medium text-gray-400">
+            Ingen annons tillgänglig
           </span>
         )}
-        <span className="text-xs uppercase tracking-[0.2em] text-black/50">
-          Published {formatDate(job.publishedAt)}
+        <span className="text-sm text-gray-500">
+          Publicerad {formatDate(job.publishedAt)}
         </span>
       </div>
 
@@ -220,31 +225,31 @@ function SwipeCard({
         <>
           {/* Full card overlay for Save */}
           <motion.div
-            className="absolute inset-0 rounded-[32px] bg-[#2f5233]/10 pointer-events-none"
+            className="absolute inset-0 rounded-3xl bg-green-500/10 pointer-events-none"
             initial={{ opacity: 0 }}
             animate={isSwiping && exitDirection === "right" ? { opacity: 1 } : { opacity: 0 }}
             transition={{ duration: 0.15 }}
           />
           {/* Full card overlay for Pass */}
           <motion.div
-            className="absolute inset-0 rounded-[32px] bg-[#7b2d26]/10 pointer-events-none"
+            className="absolute inset-0 rounded-3xl bg-red-500/10 pointer-events-none"
             initial={{ opacity: 0 }}
             animate={isSwiping && exitDirection === "left" ? { opacity: 1 } : { opacity: 0 }}
             transition={{ duration: 0.15 }}
           />
           <motion.div
-            className="absolute left-8 top-8 rounded-full border border-[#2f5233] bg-[#eff7ed] px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#2f5233]"
+            className="absolute left-8 top-8 rounded-2xl border-4 border-green-500 bg-white px-6 py-3 text-xl font-bold text-green-500 shadow-lg"
             style={{ opacity: likeOpacity }}
-            animate={isSwiping && exitDirection === "right" ? { opacity: 1 } : {}}
+            animate={isSwiping && exitDirection === "right" ? { opacity: 1, scale: 1.1 } : {}}
           >
-            Save
+            LIKE
           </motion.div>
           <motion.div
-            className="absolute right-8 top-8 rounded-full border border-[#7b2d26] bg-[#fbf1ee] px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#7b2d26]"
+            className="absolute right-8 top-8 rounded-2xl border-4 border-red-500 bg-white px-6 py-3 text-xl font-bold text-red-500 shadow-lg"
             style={{ opacity: passOpacity }}
-            animate={isSwiping && exitDirection === "left" ? { opacity: 1 } : {}}
+            animate={isSwiping && exitDirection === "left" ? { opacity: 1, scale: 1.1 } : {}}
           >
-            Pass
+            NOPE
           </motion.div>
         </>
       ) : null}
@@ -268,6 +273,8 @@ export default function Home() {
   const [hasSearched, setHasSearched] = useState(false);
   const [likedCount, setLikedCount] = useState(0);
   const [isSwiping, setIsSwiping] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [likedJobs, setLikedJobs] = useState<JobCard[]>([]);
 
   const activeBranch = useMemo(
     () => BRANCHES.find((branch) => branch.id === filters.branch),
@@ -285,9 +292,27 @@ export default function Home() {
     }
   }, []);
 
+  const fetchLikedJobs = useCallback(async () => {
+    try {
+      const response = await fetch("/api/jobs/liked");
+      if (!response.ok) return;
+      const data = (await response.json()) as { jobs?: JobCard[]; count?: number };
+      setLikedJobs(data.jobs ?? []);
+      setLikedCount(data.count ?? 0);
+    } catch {
+      // Ignore failures.
+    }
+  }, []);
+
   useEffect(() => {
     fetchLikedCount();
   }, [fetchLikedCount]);
+
+  useEffect(() => {
+    if (isSidebarOpen) {
+      fetchLikedJobs();
+    }
+  }, [isSidebarOpen, fetchLikedJobs]);
 
   const loadJobs = useCallback(async () => {
     setStatus("loading");
@@ -386,43 +411,44 @@ export default function Home() {
   const stack = useMemo(() => jobs.slice(0, 3), [jobs]);
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_#f8d9b8,_transparent_55%),radial-gradient(circle_at_bottom,_#d2ebe7,_transparent_60%)]">
+    <div className="min-h-screen bg-gray-50">
       <div className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-10 px-6 py-10 lg:px-12">
         <header className="flex flex-wrap items-center justify-between gap-6">
           <div>
-            <p className="text-xs uppercase tracking-[0.4em] text-black/40">
-              Jobsearch tinder
-            </p>
-            <h1 className="font-display text-4xl text-[#1b1a17] sm:text-5xl">
-              Swipe into your next role
-            </h1>
-            <p className="mt-2 text-sm text-black/60">
-              Live listings from Arbetsformedlingen.
+            <div className="flex items-center gap-3 mb-2">
+              <h1 className="text-5xl font-bold text-gray-900 sm:text-6xl">
+                JobbSwipen
+              </h1>
+              <span className="rounded-lg bg-blue-600 px-3 py-1 text-xs font-bold text-white">via Arbetsförmedlingen</span>
+            </div>
+            <p className="mt-2 text-lg text-gray-600">
+              Swipea dig till ditt nästa jobb
             </p>
           </div>
-          <div className="flex items-center gap-4 rounded-full border border-black/10 bg-white/70 px-4 py-2 text-sm shadow-sm backdrop-blur">
-            <span className="text-xs uppercase tracking-[0.2em] text-black/50">
-              Saved
-            </span>
-            <span className="text-lg font-semibold text-[#1b1a17]">
-              {likedCount}
-            </span>
-          </div>
+          <button
+            onClick={() => setIsSidebarOpen(true)}
+            className="flex items-center gap-3 rounded-2xl bg-indigo-600 px-6 py-3 text-white shadow-lg hover:bg-indigo-700 transition-all cursor-pointer"
+          >
+            <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
+            </svg>
+            <span className="text-2xl font-bold">{likedCount}</span>
+          </button>
         </header>
 
         <div className="grid gap-10 lg:grid-cols-[minmax(0,320px)_1fr]">
           <motion.section
-            className="flex flex-col gap-6 rounded-[28px] border border-black/10 bg-white/80 p-6 shadow-[0_20px_40px_-30px_rgba(32,26,23,0.6)] backdrop-blur"
+            className="flex flex-col gap-6 rounded-3xl bg-white p-6 shadow-xl border border-gray-200"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: "spring", stiffness: 240, damping: 24 }}
           >
             <div>
-              <h2 className="text-sm font-semibold uppercase tracking-[0.3em] text-black/60">
-                Branch
+              <h2 className="text-lg font-bold text-gray-900">
+                Bransch
               </h2>
-              <p className="text-sm text-black/60">
-                Pick a track to anchor the search.
+              <p className="text-sm text-gray-600">
+                Välj ditt område
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -434,32 +460,25 @@ export default function Home() {
                     onClick={() =>
                       setFilters((prev) => ({ ...prev, branch: branch.id }))
                     }
-                    className={`relative overflow-hidden rounded-full border border-black/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.2em] transition ${
+                    className={`relative overflow-hidden rounded-full px-5 py-2.5 text-sm font-semibold transition ${
                       isActive
-                        ? "text-white"
-                        : "bg-white text-black/60 hover:text-black"
+                        ? "bg-indigo-600 text-white shadow-md"
+                        : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                     }`}
                     type="button"
                   >
-                    {isActive ? (
-                      <motion.span
-                        layoutId="branch-pill"
-                        className={`absolute inset-0 ${branch.tone}`}
-                        transition={{ type: "spring", stiffness: 300, damping: 24 }}
-                      />
-                    ) : null}
-                    <span className="relative z-10">{branch.label}</span>
+                    {branch.label}
                   </button>
                 );
               })}
             </div>
-            <div className="rounded-2xl border border-black/10 bg-white p-4 text-sm text-black/60">
+            <div className="rounded-2xl bg-gray-50 p-4 text-sm text-gray-700">
               {activeBranch?.description}
             </div>
 
             <div className="grid gap-4">
-              <label className="grid gap-2 text-sm text-black/70">
-                Keywords
+              <label className="grid gap-2 text-sm font-medium text-gray-700">
+                Sökord
                 <input
                   value={filters.keywords}
                   onChange={(event) =>
@@ -468,12 +487,12 @@ export default function Home() {
                       keywords: event.target.value,
                     }))
                   }
-                  className="rounded-xl border border-black/10 bg-white px-3 py-2 text-sm text-black outline-none transition focus:border-black/30"
-                  placeholder="e.g. product, python, payroll"
+                  className="rounded-xl border-2 border-gray-200 bg-white px-4 py-2.5 text-gray-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                  placeholder="t.ex. produktägare, python, lön"
                 />
               </label>
-              <label className="grid gap-2 text-sm text-black/70">
-                Location
+              <label className="grid gap-2 text-sm font-medium text-gray-700">
+                Plats
                 <input
                   value={filters.location}
                   onChange={(event) =>
@@ -482,12 +501,12 @@ export default function Home() {
                       location: event.target.value,
                     }))
                   }
-                  className="rounded-xl border border-black/10 bg-white px-3 py-2 text-sm text-black outline-none transition focus:border-black/30"
-                  placeholder="e.g. Stockholm, remote"
+                  className="rounded-xl border-2 border-gray-200 bg-white px-4 py-2.5 text-gray-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                  placeholder="t.ex. Stockholm, distans"
                 />
               </label>
-              <label className="grid gap-2 text-sm text-black/70">
-                Category
+              <label className="grid gap-2 text-sm font-medium text-gray-700">
+                Kategori
                 <input
                   value={filters.category}
                   onChange={(event) =>
@@ -496,12 +515,12 @@ export default function Home() {
                       category: event.target.value,
                     }))
                   }
-                  className="rounded-xl border border-black/10 bg-white px-3 py-2 text-sm text-black outline-none transition focus:border-black/30"
-                  placeholder="e.g. frontend, sales, care"
+                  className="rounded-xl border-2 border-gray-200 bg-white px-4 py-2.5 text-gray-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                  placeholder="t.ex. frontend, försäljning, vård"
                 />
               </label>
-              <label className="flex items-center justify-between rounded-2xl border border-black/10 bg-white px-4 py-3 text-sm text-black/70">
-                Remote only
+              <label className="flex items-center justify-between rounded-xl border-2 border-gray-200 bg-white px-4 py-3 text-sm font-medium text-gray-700">
+                Endast distans
                 <input
                   type="checkbox"
                   checked={filters.remoteOnly}
@@ -511,40 +530,37 @@ export default function Home() {
                       remoteOnly: event.target.checked,
                     }))
                   }
-                  className="h-4 w-4 accent-black"
+                  className="h-5 w-5 accent-indigo-600"
                 />
               </label>
             </div>
 
             <motion.button
               onClick={loadJobs}
-              className="mt-2 flex items-center justify-center rounded-full bg-black px-6 py-3 text-sm font-semibold uppercase tracking-[0.3em] text-white shadow-lg shadow-black/20 transition disabled:cursor-not-allowed disabled:opacity-60"
-              whileHover={{ y: -2 }}
+              className="mt-2 flex items-center justify-center rounded-xl bg-indigo-600 px-6 py-4 text-base font-bold text-white shadow-lg transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
+              whileHover={{ y: -2, scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               disabled={status === "loading"}
               type="button"
             >
-              {status === "loading" ? "Loading cards" : "Find jobs"}
+              {status === "loading" ? "Laddar..." : "Sök jobb"}
             </motion.button>
             {error ? (
-              <p className="text-sm text-[#7b2d26]">{error}</p>
+              <p className="text-sm font-medium text-red-600">{error}</p>
             ) : null}
           </motion.section>
 
           <section className="flex flex-col gap-8">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
-                <p className="text-xs uppercase tracking-[0.3em] text-black/40">
-                  Results
-                </p>
-                <p className="text-lg text-black/70">
+                <p className="text-3xl font-bold text-gray-900">
                   {hasSearched
-                    ? `${total.toLocaleString()} roles matched`
-                    : "Set your filters to start."}
+                    ? `${total.toLocaleString()} jobb`
+                    : "Kom igång"}
                 </p>
-              </div>
-              <div className="flex items-center gap-3 text-xs uppercase tracking-[0.2em] text-black/50">
-                <span>{jobs.length} in deck</span>
+                <p className="text-sm text-gray-600">
+                  {jobs.length} kort kvar
+                </p>
               </div>
             </div>
 
@@ -565,57 +581,161 @@ export default function Home() {
 
               {!stack.length && hasSearched ? (
                 <motion.div
-                  className="absolute inset-0 flex flex-col items-center justify-center gap-4 rounded-[32px] border border-dashed border-black/20 bg-white/70 text-center"
+                  className="absolute inset-0 flex flex-col items-center justify-center gap-4 rounded-3xl border-2 border-dashed border-gray-300 bg-gray-50 text-center"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                 >
-                  <p className="font-display text-2xl text-[#1b1a17]">
-                    No more cards
+                  <div className="text-6xl">🎉</div>
+                  <p className="text-2xl font-bold text-gray-900">
+                    Klart!
                   </p>
-                  <p className="text-sm text-black/60">
-                    Tweak the filters or pull a fresh deck.
+                  <p className="text-gray-600">
+                    Inga fler kort. Justera filter eller ladda om.
                   </p>
                   <motion.button
                     onClick={loadJobs}
-                    className="rounded-full border border-black/10 bg-black px-6 py-3 text-xs font-semibold uppercase tracking-[0.3em] text-white"
-                    whileHover={{ y: -2 }}
-                    whileTap={{ scale: 0.98 }}
+                    className="rounded-xl bg-indigo-600 px-8 py-3 font-bold text-white shadow-lg hover:bg-indigo-700"
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
                     type="button"
                   >
-                    Reload deck
+                    Ladda om
                   </motion.button>
                 </motion.div>
               ) : null}
             </div>
 
-            <div className="flex items-center justify-center gap-4">
+            <div className="flex items-center justify-center gap-6">
               <motion.button
                 onClick={() => handleSwipe("left")}
-                className="flex h-12 w-32 items-center justify-center rounded-full border border-black/10 bg-white text-xs font-semibold uppercase tracking-[0.3em] text-black/70 shadow-sm"
-                whileHover={{ y: -2 }}
-                whileTap={{ scale: 0.96 }}
+                className="flex h-16 w-16 items-center justify-center rounded-full border-4 border-red-500 bg-white text-red-500 shadow-lg hover:bg-red-50"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
                 disabled={!jobs.length || isSwiping}
                 type="button"
               >
-                Pass
+                <svg className="h-8 w-8" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </motion.button>
               <motion.button
                 onClick={() => handleSwipe("right")}
-                className="flex h-12 w-32 items-center justify-center rounded-full bg-black text-xs font-semibold uppercase tracking-[0.3em] text-white shadow-lg shadow-black/20"
-                whileHover={{ y: -2 }}
-                whileTap={{ scale: 0.96 }}
+                className="flex h-20 w-20 items-center justify-center rounded-full bg-green-500 text-white shadow-xl hover:bg-green-600"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
                 disabled={!jobs.length || isSwiping}
                 type="button"
               >
-                Save
+                <svg className="h-10 w-10" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
+                </svg>
               </motion.button>
             </div>
-            <p className="text-center text-xs uppercase tracking-[0.2em] text-black/50">
-              Swipe right to save · left to dismiss
+            <p className="text-center text-sm text-gray-600">
+              Tryck ❤️ för att spara · ✕ för att skippa
             </p>
           </section>
         </div>
       </div>
+
+      {/* Sidebar for saved jobs */}
+      <AnimatePresence>
+        {isSidebarOpen && (
+          <>
+            {/* Backdrop */}
+            <motion.div
+              className="fixed inset-0 bg-black/50 z-40"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsSidebarOpen(false)}
+            />
+            {/* Sidebar */}
+            <motion.div
+              className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-white shadow-2xl z-50 overflow-y-auto"
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            >
+              <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">Sparade jobb</h2>
+                  <p className="text-sm text-gray-600">{likedJobs.length} jobb</p>
+                </div>
+                <button
+                  onClick={() => setIsSidebarOpen(false)}
+                  className="p-2 hover:bg-gray-100 rounded-full transition"
+                >
+                  <svg className="h-6 w-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+              <div className="p-6 space-y-4">
+                {likedJobs.length === 0 ? (
+                  <div className="text-center py-12">
+                    <div className="text-6xl mb-4">💼</div>
+                    <p className="text-lg font-semibold text-gray-900">Inga sparade jobb än</p>
+                    <p className="text-sm text-gray-600 mt-2">Tryck på ❤️ för att spara jobb du gillar</p>
+                  </div>
+                ) : (
+                  likedJobs.map((job) => (
+                    <motion.div
+                      key={job.id}
+                      className="bg-white border-2 border-gray-200 rounded-2xl p-4 hover:border-indigo-500 transition cursor-pointer"
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 flex-shrink-0">
+                          {job.logoUrl ? (
+                            <img
+                              src={job.logoUrl}
+                              alt={job.employer?.name ?? "Logo"}
+                              className="h-8 w-8 object-contain"
+                            />
+                          ) : (
+                            <svg className="h-6 w-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clipRule="evenodd" />
+                            </svg>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-xs font-medium text-gray-500 truncate">
+                            {job.employer?.name ?? "Arbetsgivare"}
+                          </p>
+                          <h3 className="text-base font-bold text-gray-900 line-clamp-2">
+                            {job.headline ?? "Tjänst utan titel"}
+                          </h3>
+                          <p className="text-xs text-gray-600 mt-1">
+                            📍 {formatLocation(job.location)}
+                          </p>
+                          {job.url && (
+                            <a
+                              href={job.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 mt-2 text-xs font-semibold text-indigo-600 hover:text-indigo-700"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              Visa annons
+                              <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                              </svg>
+                            </a>
+                          )}
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))
+                )}
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
