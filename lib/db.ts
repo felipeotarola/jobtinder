@@ -3,13 +3,20 @@ import fs from "node:fs";
 import path from "node:path";
 
 // In production (Vercel), use /tmp directory which is writable
-const isProduction = process.env.VERCEL === "1";
+// Vercel sets VERCEL=1 or we can check if we're in a lambda environment
+const isProduction = process.env.VERCEL === "1" || process.env.AWS_LAMBDA_FUNCTION_NAME;
 const dbDir = isProduction 
   ? "/tmp" 
   : path.join(process.cwd(), "data");
 
-if (!fs.existsSync(dbDir)) {
-  fs.mkdirSync(dbDir, { recursive: true });
+// Only create directory if it doesn't exist and we have write permissions
+try {
+  if (!fs.existsSync(dbDir)) {
+    fs.mkdirSync(dbDir, { recursive: true });
+  }
+} catch (error) {
+  // In serverless, we might not have permissions to create dirs outside /tmp
+  console.warn(`Could not create db directory at ${dbDir}:`, error);
 }
 
 const dbPath = path.join(dbDir, "job-cache.sqlite");
