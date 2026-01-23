@@ -127,7 +127,7 @@ function SwipeCard({
 
   return (
     <motion.article
-      className="absolute inset-0 flex h-full w-full flex-col gap-6 rounded-3xl bg-white p-8 shadow-2xl border-2 border-gray-100"
+      className="absolute inset-0 flex h-full w-full flex-col gap-4 rounded-3xl bg-white p-5 shadow-xl border-2 border-gray-100 sm:gap-6 sm:p-8 sm:shadow-2xl"
       style={{
         x: isTop ? x : 0,
         rotate: isTop ? rotate : 0,
@@ -165,16 +165,16 @@ function SwipeCard({
           <p className="text-sm font-medium text-gray-500">
             {job.employer?.name ?? "Arbetsgivare"}
           </p>
-          <h2 className="text-3xl font-bold text-gray-900 mt-1">
+          <h2 className="text-2xl font-bold text-gray-900 mt-1 sm:text-3xl">
             {job.headline ?? "Tjänst utan titel"}
           </h2>
         </div>
-        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-yellow-200 to-yellow-50 shadow-md">
+        <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-yellow-200 to-yellow-50 shadow-md sm:h-16 sm:w-16">
           {job.logoUrl ? (
             <img
               src={job.logoUrl}
               alt={job.employer?.name ?? "Logo"}
-              className="h-12 w-12 object-contain"
+              className="h-10 w-10 object-contain sm:h-12 sm:w-12"
             />
           ) : (
             <svg className="h-8 w-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
@@ -184,27 +184,27 @@ function SwipeCard({
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-2 text-sm">
-        <span className="rounded-full bg-gray-100 px-4 py-2 font-medium text-gray-700">
+      <div className="flex flex-wrap gap-2 text-xs sm:text-sm">
+        <span className="rounded-full bg-gray-100 px-3 py-1.5 font-medium text-gray-700 sm:px-4 sm:py-2">
           📍 {formatLocation(job.location)}
         </span>
-        <span className="rounded-full bg-yellow-100 px-4 py-2 font-medium text-yellow-800">
+        <span className="rounded-full bg-yellow-100 px-3 py-1.5 font-medium text-yellow-800 sm:px-4 sm:py-2">
           ⏰ {formatDate(job.applicationDeadline)}
         </span>
       </div>
 
-      <p className="text-base leading-relaxed text-gray-700">
+      <p className="text-sm leading-relaxed text-gray-700 sm:text-base">
         {job.excerpt ??
           "Ingen beskrivning tillgänglig. Klicka 'Visa annons' för fullständig information."}
       </p>
 
-      <div className="mt-auto flex items-center justify-between border-t border-gray-100 pt-4">
+      <div className="mt-auto flex flex-col items-start justify-between gap-3 border-t border-gray-100 pt-4 sm:flex-row sm:items-center">
         {job.url ? (
           <a
             href={job.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm font-semibold text-yellow-700 hover:text-yellow-800 flex items-center gap-1"
+            className="text-xs font-semibold text-yellow-700 hover:text-yellow-800 flex items-center gap-1 sm:text-sm"
           >
             Visa annons
             <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -212,11 +212,11 @@ function SwipeCard({
             </svg>
           </a>
         ) : (
-          <span className="text-sm font-medium text-gray-400">
+          <span className="text-xs font-medium text-gray-400 sm:text-sm">
             Ingen annons tillgänglig
           </span>
         )}
-        <span className="text-sm text-gray-500">
+        <span className="text-xs text-gray-500 sm:text-sm">
           Publicerad {formatDate(job.publishedAt)}
         </span>
       </div>
@@ -238,24 +238,24 @@ function SwipeCard({
             transition={{ duration: 0.15 }}
           />
           <motion.div
-            className="absolute left-8 top-8 rounded-2xl border-4 border-yellow-300 bg-white px-6 py-3 flex items-center gap-2 shadow-lg"
+            className="absolute left-4 top-4 rounded-2xl border-4 border-yellow-300 bg-white px-4 py-2 flex items-center gap-2 shadow-lg sm:left-8 sm:top-8 sm:px-6 sm:py-3"
             style={{ opacity: likeOpacity }}
             animate={isSwiping && exitDirection === "right" ? { opacity: 1, scale: 1.1 } : {}}
           >
-            <svg className="h-8 w-8 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
+            <svg className="h-6 w-6 text-yellow-500 sm:h-8 sm:w-8" fill="currentColor" viewBox="0 0 20 20">
               <path d="M2 10.5a1.5 1.5 0 113 0v6a1.5 1.5 0 01-3 0v-6zM6 10.333v5.43a2 2 0 001.106 1.79l.05.025A4 4 0 008.943 18h5.416a2 2 0 001.962-1.608l1.2-6A2 2 0 0015.56 8H12V4a2 2 0 00-2-2 1 1 0 00-1 1v.667a4 4 0 01-.8 2.4L6.8 7.933a4 4 0 00-.8 2.4z" />
             </svg>
-            <span className="text-xl font-bold text-yellow-700">LIKE</span>
+            <span className="text-lg font-bold text-yellow-700 sm:text-xl">LIKE</span>
           </motion.div>
           <motion.div
-            className="absolute right-8 top-8 rounded-2xl border-4 border-slate-400 bg-white px-6 py-3 flex items-center gap-2 shadow-lg"
+            className="absolute right-4 top-4 rounded-2xl border-4 border-slate-400 bg-white px-4 py-2 flex items-center gap-2 shadow-lg sm:right-8 sm:top-8 sm:px-6 sm:py-3"
             style={{ opacity: passOpacity }}
             animate={isSwiping && exitDirection === "left" ? { opacity: 1, scale: 1.1 } : {}}
           >
-            <svg className="h-8 w-8 text-slate-500" fill="currentColor" viewBox="0 0 20 20">
+            <svg className="h-6 w-6 text-slate-500 sm:h-8 sm:w-8" fill="currentColor" viewBox="0 0 20 20">
               <path d="M18 9.5a1.5 1.5 0 11-3 0v-6a1.5 1.5 0 013 0v6zM14 9.667v-5.43a2 2 0 00-1.105-1.79l-.05-.025A4 4 0 0011.055 2H5.64a2 2 0 00-1.962 1.608l-1.2 6A2 2 0 004.44 12H8v4a2 2 0 002 2 1 1 0 001-1v-.667a4 4 0 01.8-2.4l1.4-1.866a4 4 0 00.8-2.4z" />
             </svg>
-            <span className="text-xl font-bold text-slate-600">NOPE</span>
+            <span className="text-lg font-bold text-slate-600 sm:text-xl">NOPE</span>
           </motion.div>
         </>
       ) : null}
@@ -419,33 +419,33 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-100 via-amber-50 to-white">
-      <div className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-10 px-6 py-10 lg:px-12">
-        <header className="flex flex-wrap items-center justify-between gap-6">
+      <div className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-10 px-4 py-8 sm:px-6 sm:py-10 lg:px-12">
+        <header className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-center">
           <div>
-            <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-5xl font-bold text-gray-900 sm:text-6xl">
+            <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+              <h1 className="text-4xl font-bold text-gray-900 sm:text-6xl">
                 JobbSwipen
               </h1>
-              <span className="rounded-lg bg-blue-600 px-3 py-1 text-xs font-bold text-white">via Arbetsförmedlingen</span>
+              <span className="rounded-lg bg-blue-600 px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-white sm:text-xs">via Arbetsförmedlingen</span>
             </div>
-            <p className="mt-2 text-lg text-gray-600">
+            <p className="mt-2 text-base text-gray-600 sm:text-lg">
               Swipea dig till ditt nästa jobb
             </p>
           </div>
           <button
             onClick={() => setIsSidebarOpen(true)}
-            className="flex items-center gap-3 rounded-2xl bg-gradient-to-r from-yellow-300 to-yellow-100 px-6 py-3 text-gray-800 shadow-lg hover:from-yellow-400 hover:to-yellow-200 transition-all cursor-pointer"
+            className="flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-yellow-300 to-yellow-100 px-6 py-3 text-gray-800 shadow-lg hover:from-yellow-400 hover:to-yellow-200 transition-all sm:w-auto"
           >
             <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
               <path d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" />
             </svg>
-            <span className="text-2xl font-bold">{likedCount}</span>
+            <span className="text-xl font-bold sm:text-2xl">{likedCount}</span>
           </button>
         </header>
 
         <div className="grid gap-10 lg:grid-cols-[minmax(0,320px)_1fr]">
           <motion.section
-            className="flex flex-col gap-6 rounded-3xl bg-white p-6 shadow-xl border border-gray-200"
+            className="flex flex-col gap-6 rounded-3xl bg-white p-5 shadow-xl border border-gray-200 sm:p-6"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ type: "spring", stiffness: 240, damping: 24 }}
@@ -467,7 +467,7 @@ export default function Home() {
                     onClick={() =>
                       setFilters((prev) => ({ ...prev, branch: branch.id }))
                     }
-                    className={`relative overflow-hidden rounded-full px-5 py-2.5 text-sm font-semibold transition ${
+                    className={`relative overflow-hidden rounded-full px-4 py-2 text-sm font-semibold transition sm:px-5 sm:py-2.5 ${
                       isActive
                         ? "bg-gradient-to-r from-yellow-300 to-yellow-100 text-gray-800 shadow-md"
                         : "bg-gray-100 text-gray-700 hover:bg-gray-200"
@@ -557,7 +557,7 @@ export default function Home() {
             ) : null}
           </motion.section>
 
-          <section className="flex flex-col gap-8">
+          <section className="flex flex-col gap-10 sm:gap-8">
             <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
                 <p className="text-3xl font-bold text-gray-900">
@@ -571,7 +571,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="relative h-[520px] w-full">
+            <div className="relative h-[440px] w-full sm:h-[520px]">
               <AnimatePresence initial={false}>
                 {stack.map((job, index) => (
                   <SwipeCard
@@ -593,7 +593,7 @@ export default function Home() {
                   animate={{ opacity: 1 }}
                 >
                   <div className="text-6xl">🎉</div>
-                  <p className="text-2xl font-bold text-gray-900">
+                  <p className="text-xl font-bold text-gray-900 sm:text-2xl">
                     Klart!
                   </p>
                   <p className="text-gray-600">
@@ -612,33 +612,33 @@ export default function Home() {
               ) : null}
             </div>
 
-            <div className="flex items-center justify-center gap-6">
+            <div className="flex items-center justify-center gap-4 pt-2 sm:gap-6 sm:pt-0">
               <motion.button
                 onClick={() => handleSwipe("left")}
-                className="flex h-16 w-16 items-center justify-center rounded-full border-4 border-red-500 bg-white text-red-500 shadow-lg hover:bg-red-50"
+                className="flex h-14 w-14 items-center justify-center rounded-full border-4 border-red-500 bg-white text-red-500 shadow-lg hover:bg-red-50 sm:h-16 sm:w-16"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 disabled={!jobs.length || isSwiping}
                 type="button"
               >
-                <svg className="h-8 w-8" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24">
+                <svg className="h-7 w-7 sm:h-8 sm:w-8" fill="none" stroke="currentColor" strokeWidth={3} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </motion.button>
               <motion.button
                 onClick={() => handleSwipe("right")}
-                className="flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-yellow-300 to-yellow-100 text-gray-800 shadow-xl hover:from-yellow-400 hover:to-yellow-200"
+                className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-yellow-300 to-yellow-100 text-gray-800 shadow-xl hover:from-yellow-400 hover:to-yellow-200 sm:h-20 sm:w-20"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 disabled={!jobs.length || isSwiping}
                 type="button"
               >
-                <svg className="h-10 w-10" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="h-8 w-8 sm:h-10 sm:w-10" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
                 </svg>
               </motion.button>
             </div>
-            <p className="text-center text-sm text-gray-600">
+            <p className="text-center text-xs text-gray-600 sm:text-sm">
               Tryck ❤️ för att spara · ✕ för att skippa
             </p>
           </section>
@@ -659,15 +659,15 @@ export default function Home() {
             />
             {/* Sidebar */}
             <motion.div
-              className="fixed right-0 top-0 bottom-0 w-full max-w-md bg-white shadow-2xl z-50 overflow-y-auto"
+              className="fixed right-0 top-0 bottom-0 w-full bg-white shadow-2xl z-50 overflow-y-auto sm:max-w-md"
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 25, stiffness: 200 }}
             >
-              <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
+              <div className="sticky top-0 bg-white border-b border-gray-200 px-5 py-4 flex items-center justify-between z-10 sm:px-6">
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900">Sparade jobb</h2>
+                  <h2 className="text-xl font-bold text-gray-900 sm:text-2xl">Sparade jobb</h2>
                   <p className="text-sm text-gray-600">{likedJobs.length} jobb</p>
                 </div>
                 <button
@@ -680,7 +680,7 @@ export default function Home() {
                 </button>
               </div>
               
-              <div className="p-6 space-y-4">
+              <div className="p-5 space-y-4 sm:p-6">
                 {likedJobs.length === 0 ? (
                   <div className="text-center py-12">
                     <div className="text-6xl mb-4">💼</div>
